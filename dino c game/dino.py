@@ -21,7 +21,6 @@ tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption('Dinoland')
 
 sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'cogumelo.png')).convert_alpha()
-sprite_sol = pygame.image.load(os.path.join(diretorio_imagens, 'sol.png')).convert_alpha()
 
 def load_sound(file_path, volume):
     sound = pygame.mixer.Sound(file_path)
@@ -149,7 +148,7 @@ class Cogumelo(pygame.sprite.Sprite):
                 self.rect.x = largura
             self.rect.x -= velocidade_jogo
 
-class Aviao(pygame.sprite.Sprite):
+class Meteoro(pygame.sprite.Sprite):
     def _init_(self):
         pygame.sprite.Sprite._init_(self)
         self.imagens_dinossauro = []
@@ -177,25 +176,6 @@ class Aviao(pygame.sprite.Sprite):
             self.index_lista += 0.25
             self.image = self.imagens_dinossauro[int(self.index_lista)]
 
-class Sol(pygame.sprite.Sprite):
-    def _init_(self):
-        pygame.sprite.Sprite._init_(self)
-        self.image = sprite_sol.subsurface((0, 0), (64, 63))
-        self.rect = self.image.get_rect()
-        self.rect.y = altura - 420
-        self.rect.x = largura - 580
-        self.angle = 0
-        self.frame_count = 0  # Contador de frames
-        self.rotation_interval = 40  # Intervalo de frames para atualizar o ângulo
-
-    def update(self):
-        self.frame_count += 1
-        if self.frame_count % self.rotation_interval == 0:
-            self.angle += 1
-            rotated_image = pygame.transform.rotate(self.image, self.angle)
-            self.image = rotated_image
-            self.rect = self.image.get_rect(center=self.rect.center)
-
 todas_as_sprites = pygame.sprite.Group()
 dino = Dino()
 todas_as_sprites.add(dino)
@@ -211,15 +191,12 @@ for i in range(12):
 cogumelo = Cogumelo()
 todas_as_sprites.add(cogumelo)
 
-aviao = Aviao()
-todas_as_sprites.add(aviao)
-
-sol = Sol()
-todas_as_sprites.add(sol)
+meteoro = Meteoro()
+todas_as_sprites.add(meteoro)
 
 grupo_obstaculos = pygame.sprite.Group()
 grupo_obstaculos.add(cogumelo)
-grupo_obstaculos.add(aviao)
+grupo_obstaculos.add(meteoro)
 
 relogio = pygame.time.Clock()
 while True:
@@ -247,12 +224,12 @@ while True:
 
     todas_as_sprites.draw(tela)
 
-    if cogumelo.rect.topright[0] <= 0 or aviao.rect.topright[0] <= 0:
+    if cogumelo.rect.topright[0] <= 0 or meteoro.rect.topright[0] <= 0:
         escolha_obstaculo = choice([0,1])
         cogumelo.rect.x = largura
-        aviao.rect.x = largura
+        meteoro.rect.x = largura
         cogumelo.escolha = escolha_obstaculo
-        aviao.escolha = escolha_obstaculo
+        meteoro.escolha = escolha_obstaculo
 
     if colisoes and colidiu == False:
         som_colisao.play()
